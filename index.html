@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Guardian Tales Wiki</title>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body
+    class="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen p-6 font-['Poppins']"
+  >
+    <div id="app" class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h1
+          class="text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+        >
+          Guardian Tales Wiki
+        </h1>
+        <p class="text-gray-300 text-lg">
+          Temukan dan pelajari tentang para pahlawan Guardian Tales
+        </p>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="relative mb-8">
+        <i
+          class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+        ></i>
+        <input
+          v-model="search"
+          type="text"
+          placeholder="Cari hero..."
+          class="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
+        />
+      </div>
+
+      <!-- Elemen Filter -->
+      <div class="flex flex-wrap gap-3 mb-10 justify-center">
+        <button
+          v-for="type in elements"
+          :key="type"
+          @click="selectedElement = (selectedElement === type ? '' : type)"
+          :class="[
+          'px-6 py-3 rounded-full shadow-lg font-medium transition-all duration-300 transform hover:scale-105',
+          selectedElement === type 
+            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-blue-500/50' 
+            : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-700'
+        ]"
+        >
+          <i :class="getElementIcon(type)" class="mr-2"></i>
+          {{ type }}
+        </button>
+      </div>
+
+      <!-- Hero Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div
+          v-for="hero in filteredHeroes"
+          :key="hero.name"
+          class="group relative rounded-2xl overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
+          :class="elementColor(hero.element)"
+        >
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          ></div>
+          <img :src="hero.image" :alt="hero.name" class="w-full object-cover" />
+          <div class="p-8">
+            <!-- Pixel Character (Mini Sprite) -->
+            <div class="mt-4 flex justify-end">
+              <img
+                :src="hero.pixelImage"
+                :alt="hero.name + ' pixel art'"
+                class="w-40 h-40 object-contain"
+              />
+            </div>
+
+            <h2 class="text-3xl font-bold text-white mb-3">{{ hero.name }}</h2>
+            <div class="flex items-center text-white/90 mb-4">
+              <i :class="getElementIcon(hero.element)" class="mr-2 text-xl"></i>
+              <span class="text-lg">{{ hero.element }}</span>
+            </div>
+            <p class="text-white/80 text-base leading-relaxed">
+              {{ hero.description }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const { createApp } = Vue;
+
+      createApp({
+        data() {
+          return {
+            search: "",
+            selectedElement: "",
+            elements: ["Api", "Air", "Dasar", "Bumi", "Gelap", "Cahaya"],
+            heroes: [
+              {
+                name: "Garam",
+                element: "Air",
+                image: "garam.webp",
+                pixelImage: "pgaram.webp",
+                description:
+                  "Pemimpin pasukan khusus yang ahli dalam pertempuran jarak dekat.",
+              },
+              {
+                name: "Beth",
+                element: "Gelap",
+                image: "beth.webp",
+                pixelImage: "pbeth.webp",
+                description:
+                  "Prajurit gelap yang menguasai kekuatan bayangan dan ilusi.",
+              },
+              {
+                name: "Bianca",
+                element: "Air",
+                image: "bianca.webp",
+                pixelImage: "bianca.webp",
+                description:
+                  "Ksatria air yang membawa keadilan dengan pedangnya.",
+              },
+              {
+                name: "Plitvice",
+                element: "Api",
+                image: "plitvice.webp",
+                pixelImage: "plitvice.webp",
+                description: "Ratu api yang menguasai kekuatan vulkanik.",
+              },
+              {
+                name: "Eugene",
+                element: "Dasar",
+                image: "eugene.webp",
+                pixelImage: "eugene.webp",
+                description:
+                  "Mekanik jenius yang menciptakan senjata-senjata canggih.",
+              },
+              {
+                name: "Oghma",
+                element: "Bumi",
+                image: "oghma.webp",
+                pixelImage: "oghma.webp",
+                description: "Prajurit bumi yang memiliki pertahanan terkuat.",
+              },
+              {
+                name: "Gabriel",
+                element: "Cahaya",
+                image: "gabriel.webp",
+                pixelImage: "gabriel.webp",
+                description:
+                  "Malaikat cahaya yang membawa harapan dan penyembuhan.",
+              },
+              {
+                name: "Lupina",
+                element: "Gelap",
+                image: "lupina.webp",
+                pixelImage: "lupina.webp",
+                description: "Pemburu bayangan yang ahli dalam serangan cepat.",
+              },
+              {
+                name: "Marina",
+                element: "Air",
+                image: "marina.webp",
+                pixelImage: "marina.webp",
+                description: "Kapten kapal yang menguasai pertempuran laut.",
+              },
+              {
+                name: "Lahn",
+                element: "Api",
+                image: "lahn.webp",
+                pixelImage: "lahn.webp",
+                description:
+                  "Prajurit api yang membawa kehancuran dengan tombaknya.",
+              },
+              {
+                name: "Future Princess",
+                element: "Cahaya",
+                image: "future-princess.webp",
+                pixelImage: "future-princess.webp",
+                description: "Putri masa depan yang membawa harapan baru.",
+              },
+              {
+                name: "Kamael",
+                element: "Bumi",
+                image: "kamael.webp",
+                pixelImage: "kamael.webp",
+                description:
+                  "Prajurit bumi yang menguasai pertahanan dan serangan.",
+              },
+            ],
+          };
+        },
+        computed: {
+          filteredHeroes() {
+            return this.heroes.filter((hero) => {
+              const matchName = hero.name
+                .toLowerCase()
+                .includes(this.search.toLowerCase());
+              const matchElement =
+                this.selectedElement === "" ||
+                hero.element === this.selectedElement;
+              return matchName && matchElement;
+            });
+          },
+        },
+        methods: {
+          elementColor(element) {
+            switch (element) {
+              case "Api":
+                return "bg-gradient-to-br from-red-600 to-red-800";
+              case "Air":
+                return "bg-gradient-to-br from-blue-600 to-blue-800";
+              case "Dasar":
+                return "bg-gradient-to-br from-gray-700 to-gray-900";
+              case "Bumi":
+                return "bg-gradient-to-br from-green-600 to-green-800";
+              case "Gelap":
+                return "bg-gradient-to-br from-purple-800 to-purple-900";
+              case "Cahaya":
+                return "bg-gradient-to-br from-yellow-500 to-yellow-700";
+              default:
+                return "bg-gradient-to-br from-gray-600 to-gray-800";
+            }
+          },
+          getElementIcon(element) {
+            switch (element) {
+              case "Api":
+                return "fas fa-fire text-red-400";
+              case "Air":
+                return "fas fa-wind text-blue-400";
+              case "Dasar":
+                return "fas fa-circle text-gray-400";
+              case "Bumi":
+                return "fas fa-mountain text-green-400";
+              case "Gelap":
+                return "fas fa-moon text-purple-400";
+              case "Cahaya":
+                return "fas fa-sun text-yellow-400";
+              default:
+                return "fas fa-question text-gray-400";
+            }
+          },
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
